@@ -7,6 +7,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
+/**
+ * @property int $id
+ * @property string $firstname
+ * @property string $lastname
+ * @property int $registration_number
+ * @property bool $active
+ * @property string $email
+ * @property string $password
+ * @property Carbon|Carbon|null $email_verified_at
+ * @property Carbon|Carbon $created_at
+ * @property Carbon|Carbon $updated_at
+ */
+
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -24,6 +38,7 @@ class User extends Authenticatable
         'registration_number',
         'active',
         'email',
+        'password',
     ];
 
     /**
@@ -47,10 +62,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function username()
-    {
-        return 'registration_number';
     }
 }

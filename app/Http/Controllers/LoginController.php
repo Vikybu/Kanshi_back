@@ -3,30 +3,58 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\LoginService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 
-class LoginController extends Controller
+class LoginController 
 {
+    protected $loginService;
+
+     public function __construct(LoginService $loginService)
+    {
+        $this->loginService = $loginService;
+    }
+
     public function authenticate(Request $request)
     {
-        $credentials = $request->validate([
-            'registration_number' => ['required', 'string'],
-            'password' => ['required', 'string'],
+        $request->validate([
+            'registration_number' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $key = 'login-attempt:' . $request->ip();
 
+        if (RateLimiter::tooManyAttempts($key, 5)) {
             return response()->json([
-                'success' => true,
-                'message' => 'Authenticated',
-                'user' => Auth::user()
-            ]);
+                'success' => false,
+                'message' => 'Trop de tentatives. Réessayez dans ' . RateLimiter::availableIn($key) . ' secondes.'
+            ], 429);
         }
 
+        $user = $this->loginService->login(
+            $request->registration_number,
+            $request->password
+        );
+
+        if (!$user) {
+            RateLimiter::hit($key, 60); 
+            return response()->json([
+                'success' => false,
+                'message' => 'Identifiants incorrects'
+            ], 401);
+        }
+
+        RateLimiter::clear($key);
+
+        Auth::login($user);
+
+        $request->session()->regenerate();
+
         return response()->json([
-            'success' => false,
-            'message' => 'Invalid credentials'
-        ], 401);
+            'success' => true,
+            'message' => 'Authenticated',
+            'user' => $request->user()->only(['id', 'name', 'registration_number', 'role']) 
+        ]);
     }
 }
