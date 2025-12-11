@@ -54,7 +54,7 @@ class LoginController
         return response()->json([
             'success' => true,
             'message' => 'Authenticated',
-            'user' => $request->user()->only(['id', 'name', 'registration_number', 'role']) 
+            'user' => $request->user()->only(['id', 'firstname', 'registration_number', 'authorization']) 
         ]);
     }
 }
