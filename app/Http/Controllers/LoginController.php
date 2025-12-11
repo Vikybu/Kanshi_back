@@ -7,7 +7,7 @@ use App\Services\LoginService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 
-class LoginController 
+class LoginController extends Controller
 {
     protected $loginService;
 
@@ -47,14 +47,14 @@ class LoginController
 
         RateLimiter::clear($key);
 
-        Auth::login($user);
-
-        $request->session()->regenerate();
-
         return response()->json([
-            'success' => true,
-            'message' => 'Authenticated',
-            'user' => $request->user()->only(['id', 'firstname', 'registration_number', 'authorization']) 
+        'success' => true,
+        'user' => [
+            'id' => $user->id,
+            'firstname' => $user->firstname,
+            'registration_number' => $user->registration_number,
+            'authorization' => $user->authorization
+        ]
         ]);
     }
 }
