@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('firstname');
             $table->string('lastname');
+            $table->string('password', 255);
             $table->string('authorization');
             $table->integer('registration_number');
             $table->boolean('active');
