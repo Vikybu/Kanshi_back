@@ -13,13 +13,38 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        $users = [
+            [
             'firstname' => 'Victoria',
             'lastname' => 'Fleury',
-            'authorization' => 'Admin',
-            'active' => True,
+            'authorization' => 'admin',
+            'active' => true,
             'registration_number' => '123456',
-            'password' => bcrypt('1234'),
-        ]);
+            'password' => 'Password123!',
+            ],
+            [
+            'firstname' => 'Jean',
+            'lastname' => 'Dupont',
+            'authorization' => 'operator',
+            'active' => true,
+            'registration_number' => '234567',
+            'password' => 'Password123!',
+            ],
+            [
+            'firstname' => 'Marie',
+            'lastname' => 'Martin',
+            'authorization' => 'viewer',
+            'active' => false, // Utilisateur inactif pour tester
+            'registration_number' => '345678',
+            'password' => 'Password123!',
+            ],
+        ];
+
+        foreach ($users as $user) {
+            User::firstOrCreate(
+                ['registration_number' => $user['registration_number']],
+                $user
+            );
+        }
     }
 }
