@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -13,20 +12,19 @@ class LoginRateLimiterTest extends TestCase
     use RefreshDatabase;
 
     protected function setUp(): void
-{
-    parent::setUp();
+    {
+        parent::setUp();
 
-    User::factory()->create([
-        'registration_number' => '123456',
-        'password' => bcrypt('correct-password'),
-    ]);
+        User::factory()->create([
+            'registration_number' => '123456',
+            'password' => bcrypt('correct-password'),
+        ]);
 
-    RateLimiter::clear('/api/login');
-}
+        RateLimiter::clear('/api/login');
+    }
 
     public function test_login_is_rate_limites_after_too_many_attempts()
     {
-        dump(config('database.default'));
         $payload = [
             'registration_number' => "123456",
             'password' => "Password123!",
