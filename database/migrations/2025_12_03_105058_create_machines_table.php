@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
+            $table->string('machine_name');
+            $table->string('short_name')->nullable();
             $table->integer('theoritical_industrial_pace');
-            $table->string('medurement_unit');
-            $table->integer('max_capacity');
-            $table->string('status');
+            $table->string('measurement_unit');
+            $table->integer('max_capacity')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }
