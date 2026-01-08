@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+Ah je vois le problème ! Tu as deux fois DB_CONNECTION dans ton phpunit.xml :
+
+Ligne avec value="mysql"
+Ligne avec value="sqlite"
+
+La première déclaration (MySQL) prend la priorité et écrase la seconde. Voici le fichier corrigé :
+xml<?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
@@ -16,18 +22,13 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="DB_CONNECTION" value="mysql"/>
-        <env name="DB_HOST" value="127.0.0.1"/>
-        <env name="DB_PORT" value="3306"/>
-        <env name="DB_DATABASE" value="Kanshi_test"/>
-        <env name="DB_USERNAME" value="root"/>
-        <env name="DB_PASSWORD" value="Root1234!"/>
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
