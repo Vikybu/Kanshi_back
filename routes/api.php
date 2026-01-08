@@ -8,3 +8,5 @@ use App\Http\Controllers\MachineController;
 Route::post('/login', [LoginController::class, 'authenticate']);
 
 Route::post('/machine/create', [MachineController::class, 'addAMachine']);
+
+Route::get('/admin/machine', [MachineController::class, 'getInfosAllMachines']);

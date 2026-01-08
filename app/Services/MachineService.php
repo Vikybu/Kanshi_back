@@ -22,4 +22,9 @@ class MachineService
 
         return $this->machineRepository->addMachine($data);
     }
+
+    public function getAllMachines()
+    {
+        return $this->machineRepository->getInfosMachines();
+    }
 }
