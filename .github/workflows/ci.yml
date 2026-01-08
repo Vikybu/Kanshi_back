@@ -16,3 +16,6 @@ jobs:
                 php-version: '8.2'
             - name: Install dependencies
               run: composer install --prefer-dist --no-progress
+            - name: Running tests
+              run: php artisan test
+                

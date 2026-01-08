@@ -29,4 +29,10 @@ class MachineController extends Controller
 
         return response()->json($machine, 201);
     }
+
+    public function getInfosAllMachines()
+    {
+        $machine = $this->machineService->getAllMachines();
+        return response()->json($machine, 200);
+    }
 }
