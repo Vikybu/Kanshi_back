@@ -1,9 +1,3 @@
-Ah je vois le problème ! Tu as deux fois DB_CONNECTION dans ton phpunit.xml :
-
-Ligne avec value="mysql"
-Ligne avec value="sqlite"
-
-La première déclaration (MySQL) prend la priorité et écrase la seconde. Voici le fichier corrigé :
 xml<?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
