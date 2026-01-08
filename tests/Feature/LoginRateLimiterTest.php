@@ -41,5 +41,12 @@ class LoginRateLimiterTest extends TestCase
         $response->assertJson([
             'message' => 'Trop de tentatives. Réessayez dans 60 secondes.',
         ]);
+
+        $message = $response->json('message');
+            $this->assertTrue(
+                str_contains($message, '59 secondes') || str_contains($message, '60 secondes'),
+                "Expected message to contain '59 secondes' or '60 secondes', got: {$message}"
+            );
+
     }
 }
