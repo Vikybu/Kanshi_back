@@ -8,6 +8,22 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        
+        services:
+          mysql:
+            image: mysql:8.0
+            env:
+              MYSQL_ROOT_PASSWORD: Root1234!
+              MYSQL_DATABASE: Kanshi_test
+              MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+            ports:
+              - 3306:3306
+            options: >-
+              --health-cmd="mysqladmin ping -pRoot1234!"
+              --health-interval=10s
+              --health-timeout=5s
+              --health-retries=5
+        
         steps:
             - uses: actions/checkout@v4
             
@@ -15,28 +31,53 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                 php-version: '8.2'
+                extensions: mbstring, pdo, pdo_mysql, mysql
                 
-            - name: Create .env for testing
+            - name: Verify MySQL connection
               run: |
-                cat > .env << EOF
-                APP_ENV=testing
-                APP_DEBUG=true
-                APP_KEY=
-                DB_CONNECTION=sqlite
-                DB_DATABASE=:memory:
-                CACHE_DRIVER=array
-                QUEUE_CONNECTION=sync
-                SESSION_DRIVER=array
-                EOF
+                sudo apt-get install -y mysql-client
+                for i in {1..30}; do
+                  if mysql -h 127.0.0.1 -P 3306 -u root -pRoot1234! -e "SELECT 1" &> /dev/null; then
+                    echo "MySQL is ready!"
+                    break
+                  fi
+                  echo "Waiting for MySQL... ($i/30)"
+                  sleep 2
+                done
+                mysql -h 127.0.0.1 -P 3306 -u root -pRoot1234! -e "SHOW DATABASES;"
                 
             - name: Install dependencies
               run: composer install --prefer-dist --no-progress
               
+            - name: Create .env file
+              run: |
+                cp .env.example .env || echo "No .env.example found"
+                echo "DB_CONNECTION=mysql" >> .env
+                echo "DB_HOST=127.0.0.1" >> .env
+                echo "DB_PORT=3306" >> .env
+                echo "DB_DATABASE=Kanshi_test" >> .env
+                echo "DB_USERNAME=root" >> .env
+                echo "DB_PASSWORD=Root1234!" >> .env
+                
             - name: Generate application key
               run: php artisan key:generate
+              
+            - name: Clear and cache config
+              run: |
+                php artisan config:clear
+                php artisan config:cache
+                
+            - name: Test database connection
+              run: php artisan db:show
+
+            - name: Run migrations
+              run: |
+                php artisan migrate --force
+                php artisan cache:table
+                php artisan migrate --force
               
             - name: Run migrations
               run: php artisan migrate --force
               
             - name: Running tests
-              run: php artisan test
+              run: php artisan test --stop-on-failure

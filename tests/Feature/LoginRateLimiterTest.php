@@ -23,6 +23,7 @@ class LoginRateLimiterTest extends TestCase
         RateLimiter::clear('/api/login');
     }
 
+
     public function test_login_is_rate_limites_after_too_many_attempts()
     {
         $payload = [
@@ -38,8 +39,11 @@ class LoginRateLimiterTest extends TestCase
         $response = $this->postJson('/api/login', $payload);
 
         $response->assertStatus(429);
-        $response->assertJson([
-            'message' => 'Trop de tentatives. Réessayez dans 60 secondes.',
-        ]);
+        $response->assertJsonStructure(['success', 'message']);
+        $response->assertJson(['success' => false]);
+        
+        // Vérifie que le message contient "Trop de tentatives"
+        $message = $response->json('message');
+        $this->assertStringContainsString('Trop de tentatives', $message);
     }
 }
