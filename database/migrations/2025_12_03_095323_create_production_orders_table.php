@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('production_orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('theoritical_production_duration');
-            $table->integer('theoritical_incoming_product_quantity');
-            $table->integer('actual_incoming_product_quantity');
+            $table->string('production_order_reference');
+            $table->integer('theoritical_raw_material_quantity');
+            $table->integer('actual_raw_material_quantity');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->integer('theoritical_outgoing_product_quantity');
-            $table->integer('actual_outgoing_product_quantity');
+            $table->integer('time_measurement');
+            $table->integer('theoritical_final_product_quantity');
+            $table->integer('actual_final_product_quantity');
             $table->string('status');
             $table->timestamps();
         });
