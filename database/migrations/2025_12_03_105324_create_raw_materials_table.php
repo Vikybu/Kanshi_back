@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('raw_materials', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('reference');
             $table->string('type');
-            $table->integer('theoritical_industrial_pace');
+            $table->string('measurement_unit');
+            $table->integer('theoritical_industrial_pace')->nullable();
             $table->boolean('active');
             $table->timestamps();
         });

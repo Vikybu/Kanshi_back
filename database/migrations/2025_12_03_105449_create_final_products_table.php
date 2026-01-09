@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('type');
-            $table->integer('theoritical_industrial_pace');
+            $table->string('measurement_unit');
+            $table->string('reference');
+            $table->integer('theoritical_industrial_pace')->nullable();
             $table->boolean('active');
             $table->timestamps();
         });
