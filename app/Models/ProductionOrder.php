@@ -20,4 +20,9 @@ class ProductionOrder extends Model
         'final_product_id'
     ];
 
+    public function machines()
+    {
+        return $this->belongsToMany(Machine::class);
+    }
+
 }

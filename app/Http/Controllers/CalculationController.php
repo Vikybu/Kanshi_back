@@ -16,7 +16,9 @@ class CalculationController extends Controller
         $resultat = $service->calculation(
             theoritical_raw_material_quantity: $request->theoritical_raw_material_quantity,
             machine_theoritical_industrial_pace: $request->machine_theoritical_industrial_pace,
-            quantity_per_final_product: $request->quantity_per_final_product,
+            final_product_quantity_per_product: $request->final_product_quantity_per_product,
+            measurement_unit: $request->measurement_unit,
+            machine_id: $request->machine_id,
             start_time: $request->start_time
         );
 
