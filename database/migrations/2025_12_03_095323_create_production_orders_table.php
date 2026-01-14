@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('actual_raw_material_quantity');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->integer('time_measurement');
             $table->integer('theoritical_final_product_quantity');
             $table->integer('actual_final_product_quantity');
             $table->string('status');

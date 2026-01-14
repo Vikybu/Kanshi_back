@@ -13,19 +13,10 @@ return new class extends Migration
     {
         Schema::create('machine_production_order', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('machine_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->foreignId('production_order_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
+            $table->foreignId('production_order_id')->constrained('production_orders')->onDelete('cascade');
+            $table->foreignId('machine_id')->constrained('machines')->onDelete('cascade');
             $table->timestamps();
-
-            $table->unique(['machine_id', 'production_order_id']);
-        });
+});
     }
 
     /**

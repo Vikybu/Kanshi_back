@@ -24,5 +24,4 @@ class ProductionOrder extends Model
     {
         return $this->belongsToMany(Machine::class);
     }
-
 }

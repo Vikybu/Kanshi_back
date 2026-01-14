@@ -3,10 +3,23 @@
 namespace App\Services;
 
 use App\Models\ProductionOrder;
+use App\Repositories\ProductionOrderRepository;
 use Carbon\Carbon;
 
 class ProductionOrderService
 {
+    protected $productionOrderRepository;
+
+    public function __construct(ProductionOrderRepository $productionOrderRepository)
+    {
+        $this->productionOrderRepository = $productionOrderRepository;
+    }
+
+    public function addProductionOrder(array $data){
+
+        return $this->productionOrderRepository->addProductionOrder($data);
+    }
+
     /**
      * Calcul de la simulation d'un ordre de fabrication
      *

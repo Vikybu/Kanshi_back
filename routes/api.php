@@ -7,6 +7,7 @@ use App\Http\Controllers\MachineController;
 use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\FinalProductController;
 use App\Http\Controllers\CalculationController;
+use App\Http\Controllers\ProductionOrderController;
 
 Route::post('/login', [LoginController::class, 'authenticate']);
 
@@ -19,3 +20,5 @@ Route::get('/admin/raw_material', [RawMaterialController::class, 'getAllRawMater
 Route::get('/admin/final_product', [FinalProductController::class, 'getAllFinalProduct']);
 
 Route::post('/admin/productionOrder/simuler', [CalculationController::class, 'calculation']);
+
+Route::post('/admin/productionOrder/create', [ProductionOrderController::class, 'addANewProductionOrder']);
