@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ProductionOrder;
 use App\Repositories\ProductionOrderRepository;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ProductionOrderService
@@ -59,25 +60,10 @@ class ProductionOrderService
 
         $end = $start->copy()->addMinutes($duration_minutes);
 
-        // Vérification de conflit de planning
-        $conflict = ProductionOrder::whereHas('machines', function ($q) use ($machine_id) {
-                $q->where('machines.id', $machine_id);
-            })
-            ->where(function ($q) use ($start, $end) {
-                $q->whereBetween('start_time', [$start, $end])
-                  ->orWhereBetween('end_time', [$start, $end])
-                  ->orWhere(function ($q) use ($start, $end) {
-                      $q->where('start_time', '<=', $start)
-                        ->where('end_time', '>=', $end);
-                  });
-            })
-            ->exists();
-
         return [
             'theoritical_final_product_quantity' => $theoritical_final_product_quantity,
             'end_time' => $end->format('d/m/Y H:i'),
             'duration_minutes' => round($duration_minutes),
-            'conflit_planning' => $conflict,
         ];
     }
 }

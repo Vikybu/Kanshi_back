@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductionOrder;
 use App\Services\ProductionOrderService;
 use Illuminate\Http\Request;
 
@@ -31,5 +32,29 @@ class ProductionOrderController extends Controller
         $message = $this->productionOrderService->addProductionOrder($productionOrder);
 
         return response()->json($message, 201);
+    }
+
+    public function checkConflict(Request $request)
+    {
+        $request->validate([
+            'machine_id' => 'required|integer',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date',
+        ]);
+
+        $conflict = ProductionOrder::whereHas('machines', function ($q) use ($request) {
+            $q->where('machines.id', $request->machine_id);
+        })
+        ->where(function ($q) use ($request) {
+            $q->whereBetween('start_time', [$request->start_time, $request->end_time])
+            ->orWhereBetween('end_time', [$request->start_time, $request->end_time])
+            ->orWhere(function ($q) use ($request) {
+                $q->where('start_time', '<=', $request->start_time)
+                    ->where('end_time', '>=', $request->end_time);
+            });
+        })
+        ->exists();
+
+        return response()->json(['conflict' => $conflict]);
     }
 }

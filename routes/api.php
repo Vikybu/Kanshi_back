@@ -22,3 +22,5 @@ Route::get('/admin/final_product', [FinalProductController::class, 'getAllFinalP
 Route::post('/admin/productionOrder/simuler', [CalculationController::class, 'calculation']);
 
 Route::post('/admin/productionOrder/create', [ProductionOrderController::class, 'addANewProductionOrder']);
+
+Route::post('/admin/productionOrder/checkConflict', [ProductionOrderController::class, 'checkConflict']);
