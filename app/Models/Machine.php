@@ -16,4 +16,9 @@ class Machine extends Model
         'status',
     ];
 
+    public function productionOrders()
+    {
+        return $this->belongsToMany(ProductionOrder::class);
+    }
+
 }

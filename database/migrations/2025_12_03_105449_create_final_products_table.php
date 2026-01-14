@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('type');
+            $table->integer('quantity_of_product');
             $table->string('measurement_unit');
             $table->string('reference');
             $table->integer('theoritical_industrial_pace')->nullable();

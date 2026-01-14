@@ -16,6 +16,7 @@ class MachineController extends Controller
 
     public function addAMachine(Request $request)
     {
+
         $data = $request->validate([
             'machine_name' => 'required|string|max:255',
             'short_name' => 'sometimes|string|max:255',

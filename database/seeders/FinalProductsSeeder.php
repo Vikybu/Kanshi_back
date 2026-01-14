@@ -16,6 +16,7 @@ class FinalProductsSeeder extends Seeder
             [
             'name' => 'Carottes rapées 300g',
             'type' => 'légumes',
+            'quantity_of_product' => '300',
             'measurement_unit' => 'barquettes',
             'reference' => 'FPCR456',
             'theoritical_industrial_pace' => null,
@@ -24,6 +25,7 @@ class FinalProductsSeeder extends Seeder
             [
             'name' => 'Choux rapées 250g',
             'type' => 'légumes',
+            'quantity_of_product' => '250',
             'measurement_unit' => 'barquettes',
             'reference' => 'FPCHR455',
             'theoritical_industrial_pace' => null,
@@ -32,6 +34,7 @@ class FinalProductsSeeder extends Seeder
             [
             'name' => 'Choux rouge rapées 250g',
             'type' => 'légumes',
+            'quantity_of_product' => '250',
             'measurement_unit' => 'barquettes',
             'reference' => 'FPCRR478',
             'theoritical_industrial_pace' => null,
