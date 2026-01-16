@@ -15,6 +15,12 @@ class ProductionOrderController extends Controller
         $this->productionOrderService = $productionOrderService;
     }
 
+        public function getInfosAllProductionOrder()
+    {
+        $productionOrder = $this->productionOrderService->getAllProductionOrders();
+        return response()->json($productionOrder, 200);
+    }
+
     public function addANewProductionOrder(Request $request){
 
         $productionOrder = $request->validate([
@@ -27,6 +33,8 @@ class ProductionOrderController extends Controller
             'actual_final_product_quantity' => 'required|integer',
             'status' => 'required|string',
             'machine_id' => 'required|exists:machines,id',
+            'final_products_id' => 'required|integer',
+            'raw_material_id' => 'required|exists:raw_materials,id',
         ]);
 
         $message = $this->productionOrderService->addProductionOrder($productionOrder);
