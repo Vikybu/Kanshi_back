@@ -15,6 +15,11 @@ class ProductionOrderService
     {
         $this->productionOrderRepository = $productionOrderRepository;
     }
+    
+    public function getAllProductionOrders()
+    {
+        return $this->productionOrderRepository->getInfosProductionOrders();
+    }
 
     public function addProductionOrder(array $data){
 

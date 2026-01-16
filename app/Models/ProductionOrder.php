@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ProductionOrder extends Model
 {
@@ -17,11 +18,26 @@ class ProductionOrder extends Model
         'theoritical_final_product_quantity',
         'actual_final_product_quantity',
         'status',
-        'final_product_id'
+        'final_products_id'
     ];
 
-    public function machines()
+    public function machines(): BelongsToMany
     {
-        return $this->belongsToMany(Machine::class);
+        return $this->belongsToMany(
+            Machine::class,
+            'machine_production_order',
+            'production_order_id',
+            'machine_id'
+        );
+    }
+
+    public function rawMaterials()
+    {
+        return $this->belongsToMany(
+            RawMaterial::class,
+            'production_order_raw_material',
+            'production_order_id',
+            'raw_material_id'
+        );
     }
 }
