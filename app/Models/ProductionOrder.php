@@ -18,7 +18,9 @@ class ProductionOrder extends Model
         'theoritical_final_product_quantity',
         'actual_final_product_quantity',
         'status',
-        'final_products_id'
+        'final_products_id',
+        'real_start_time',
+        'real_end_time'
     ];
 
     public function machines(): BelongsToMany
@@ -39,5 +41,11 @@ class ProductionOrder extends Model
             'production_order_id',
             'raw_material_id'
         );
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'production_order_user', 'production_order_id', 'user_id')
+                    ->withPivot('active_production');
     }
 }
