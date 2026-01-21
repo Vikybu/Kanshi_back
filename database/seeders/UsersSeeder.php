@@ -32,8 +32,8 @@ class UsersSeeder extends Seeder
             [
             'firstname' => 'Marie',
             'lastname' => 'Martin',
-            'authorization' => 'viewer',
-            'active' => false, // Utilisateur inactif pour tester
+            'authorization' => 'operator',
+            'active' => true, // Utilisateur inactif pour tester
             'registration_number' => '345678',
             'password' => 'Password123!',
             ],

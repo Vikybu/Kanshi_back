@@ -17,6 +17,9 @@ class ProductionOrderRepository
 
         unset($data['machine_id'], $data['raw_material_id']);
 
+        $data['real_start_time'] = $data['real_start_time'] ?? null;
+        $data['real_end_time'] = $data['real_end_time'] ?? null;
+
         $productionOrder = ProductionOrder::create($data);
 
         if ($machineId) {
@@ -28,6 +31,24 @@ class ProductionOrderRepository
         }
 
         return $productionOrder;
+    }
+
+    public function modifyFORealStartTime($realStartTime, $id, $status)
+    {
+        $order = ProductionOrder::find($id);
+        if (!$order){
+            return ['error' => 'Ordre de production introuvable'];
+        }
+
+        $order->real_start_time = $realStartTime;
+        $order->status = $status;
+        $order->save();
+
+        return[
+        'success' => true,
+        'message' => 'Date de démarrage enregistrée',
+        'order' => $order
+        ];
     }
 
         public function getInfosProductionOrders(): Collection

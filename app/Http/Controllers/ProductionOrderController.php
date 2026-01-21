@@ -21,6 +21,15 @@ class ProductionOrderController extends Controller
         return response()->json($productionOrder, 200);
     }
 
+        public function addRealStartTime(Request $request)
+    {
+        $realStartTime = $request->input('real_start_time');
+        $id = $request->input('id');
+        $status = $request->input('status');
+        $message = $this->productionOrderService->addInfoRealStartTime($realStartTime, $id, $status);
+        return response()->json($message, 201);
+    }
+
     public function addANewProductionOrder(Request $request){
 
         $productionOrder = $request->validate([
@@ -35,6 +44,8 @@ class ProductionOrderController extends Controller
             'machine_id' => 'required|exists:machines,id',
             'final_products_id' => 'required|integer',
             'raw_material_id' => 'required|exists:raw_materials,id',
+            'real_start_time' => 'nullable|date',
+            'real_end_time' => 'nullable|date',
         ]);
 
         $message = $this->productionOrderService->addProductionOrder($productionOrder);

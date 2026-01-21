@@ -8,6 +8,7 @@ use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\FinalProductController;
 use App\Http\Controllers\CalculationController;
 use App\Http\Controllers\ProductionOrderController;
+use App\Http\Controllers\UserProductionOrderController;
 
 Route::post('/login', [LoginController::class, 'authenticate']);
 
@@ -26,3 +27,7 @@ Route::post('/admin/productionOrder/simuler', [CalculationController::class, 'ca
 Route::post('/admin/productionOrder/create', [ProductionOrderController::class, 'addANewProductionOrder']);
 
 Route::post('/admin/productionOrder/checkConflict', [ProductionOrderController::class, 'checkConflict']);
+
+Route::put('/user/fo/modify', [ProductionOrderController::class, 'addRealStartTime']);
+
+Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);

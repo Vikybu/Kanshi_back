@@ -21,6 +21,11 @@ class ProductionOrderService
         return $this->productionOrderRepository->getInfosProductionOrders();
     }
 
+    public function addInfoRealStartTime(string $realStartTime, int $id, string $status)
+    {
+        return $this->productionOrderRepository->modifyFORealStartTime($realStartTime, $id, $status);
+    }
+
     public function addProductionOrder(array $data){
 
         return $this->productionOrderRepository->addProductionOrder($data);
