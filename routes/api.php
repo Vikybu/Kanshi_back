@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MachineController;
@@ -21,6 +20,8 @@ Route::get('/admin/raw_material', [RawMaterialController::class, 'getAllRawMater
 Route::get('/admin/final_product', [FinalProductController::class, 'getAllFinalProduct']);
 
 Route::get('/admin/productionOrder/get', [ProductionOrderController::class, 'getInfosAllProductionOrder']);
+
+Route::get('/user/production/get/{id}', [ProductionOrderController::class, 'getInfosOneProductionOrder']);
 
 Route::post('/admin/productionOrder/simuler', [CalculationController::class, 'calculation']);
 

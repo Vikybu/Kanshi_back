@@ -21,6 +21,12 @@ class ProductionOrderController extends Controller
         return response()->json($productionOrder, 200);
     }
 
+    public function getInfosOneProductionOrder(int $id)
+    {
+        $productionOrder = $this->productionOrderService->getOneProductionOrder($id);
+        return response()->json($productionOrder, 200);
+    }
+
         public function addRealStartTime(Request $request)
     {
         $realStartTime = $request->input('real_start_time');

@@ -51,7 +51,7 @@ class ProductionOrderRepository
         ];
     }
 
-        public function getInfosProductionOrders(): Collection
+    public function getInfosProductionOrders(): Collection
     {
         $productionOrder = ProductionOrder::select(
             'id',
@@ -64,6 +64,26 @@ class ProductionOrderRepository
             ->with('rawMaterials:id,name,measurement_unit')
             ->with('machines:id,machine_name')
             ->get();
+
+        return $productionOrder;
+    }
+
+    public function getInfosOneProductionOrders($id): ?ProductionOrder
+    {
+        $productionOrder = ProductionOrder::select(
+            'id',
+            'real_start_time',
+            'theoritical_raw_material_quantity', 
+            'production_order_reference', 
+            'start_time', 
+            'actual_final_product_quantity',
+            'theoritical_final_product_quantity',
+            'status'
+        )
+        ->with('rawMaterials:id,name,measurement_unit')
+        ->with('machines:id,machine_name')
+        ->where('id', $id)
+        ->first();
 
         return $productionOrder;
     }
