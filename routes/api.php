@@ -31,4 +31,6 @@ Route::post('/admin/productionOrder/checkConflict', [ProductionOrderController::
 
 Route::put('/user/fo/modify', [ProductionOrderController::class, 'addRealStartTime']);
 
+Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQuantityProduct']);
+
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);

@@ -19,6 +19,7 @@ class ProductionOrderRepository
 
         $data['real_start_time'] = $data['real_start_time'] ?? null;
         $data['real_end_time'] = $data['real_end_time'] ?? null;
+        $data['duration_time'] = $data['duration_time'] ?? null;
 
         $productionOrder = ProductionOrder::create($data);
 
@@ -78,7 +79,8 @@ class ProductionOrderRepository
             'start_time', 
             'actual_final_product_quantity',
             'theoritical_final_product_quantity',
-            'status'
+            'status',
+            'duration_time'
         )
         ->with('rawMaterials:id,name,measurement_unit')
         ->with('machines:id,machine_name')
@@ -86,5 +88,22 @@ class ProductionOrderRepository
         ->first();
 
         return $productionOrder;
+    }
+
+    public function updateQuantityProduction($id, $actual_final_product_quantity)
+    {
+        $order = ProductionOrder::find($id);
+        if (!$order){
+            return ['error' => 'Ordre de production introuvable'];
+        }
+
+        $order->actual_final_product_quantity = $actual_final_product_quantity;
+        $order->save();
+
+        return[
+        'success' => true,
+        'message' => 'Quantité enregistrée',
+        'order' => $order
+        ];
     }
 }

@@ -27,6 +27,15 @@ class ProductionOrderController extends Controller
         return response()->json($productionOrder, 200);
     }
 
+    public function addQuantityProduct(Request $request)
+    {
+        $id = $request->input('id');
+        $actual_final_product_quantity = $request->input('actual_final_product_quantity');
+        $productionOrder = $this->productionOrderService->addQuantityProduction($id, $actual_final_product_quantity);
+        
+        return response()->json($productionOrder, 200);
+    }
+
         public function addRealStartTime(Request $request)
     {
         $realStartTime = $request->input('real_start_time');
@@ -52,6 +61,7 @@ class ProductionOrderController extends Controller
             'raw_material_id' => 'required|exists:raw_materials,id',
             'real_start_time' => 'nullable|date',
             'real_end_time' => 'nullable|date',
+            'duration_time' => 'nullable|integer',
         ]);
 
         $message = $this->productionOrderService->addProductionOrder($productionOrder);
