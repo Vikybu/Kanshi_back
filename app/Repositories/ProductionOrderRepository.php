@@ -19,6 +19,7 @@ class ProductionOrderRepository
 
         $data['real_start_time'] = $data['real_start_time'] ?? null;
         $data['real_end_time'] = $data['real_end_time'] ?? null;
+        $data['duration_time'] = $data['duration_time'] ?? null;
 
         $productionOrder = ProductionOrder::create($data);
 
@@ -51,7 +52,7 @@ class ProductionOrderRepository
         ];
     }
 
-        public function getInfosProductionOrders(): Collection
+    public function getInfosProductionOrders(): Collection
     {
         $productionOrder = ProductionOrder::select(
             'id',
@@ -66,5 +67,43 @@ class ProductionOrderRepository
             ->get();
 
         return $productionOrder;
+    }
+
+    public function getInfosOneProductionOrders($id): ?ProductionOrder
+    {
+        $productionOrder = ProductionOrder::select(
+            'id',
+            'real_start_time',
+            'theoritical_raw_material_quantity', 
+            'production_order_reference', 
+            'start_time', 
+            'actual_final_product_quantity',
+            'theoritical_final_product_quantity',
+            'status',
+            'duration_time'
+        )
+        ->with('rawMaterials:id,name,measurement_unit')
+        ->with('machines:id,machine_name')
+        ->where('id', $id)
+        ->first();
+
+        return $productionOrder;
+    }
+
+    public function updateQuantityProduction($id, $actual_final_product_quantity)
+    {
+        $order = ProductionOrder::find($id);
+        if (!$order){
+            return ['error' => 'Ordre de production introuvable'];
+        }
+
+        $order->actual_final_product_quantity = $actual_final_product_quantity;
+        $order->save();
+
+        return[
+        'success' => true,
+        'message' => 'Quantité enregistrée',
+        'order' => $order
+        ];
     }
 }

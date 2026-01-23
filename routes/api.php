@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MachineController;
@@ -22,6 +21,8 @@ Route::get('/admin/final_product', [FinalProductController::class, 'getAllFinalP
 
 Route::get('/admin/productionOrder/get', [ProductionOrderController::class, 'getInfosAllProductionOrder']);
 
+Route::get('/user/production/get/{id}', [ProductionOrderController::class, 'getInfosOneProductionOrder']);
+
 Route::post('/admin/productionOrder/simuler', [CalculationController::class, 'calculation']);
 
 Route::post('/admin/productionOrder/create', [ProductionOrderController::class, 'addANewProductionOrder']);
@@ -29,5 +30,7 @@ Route::post('/admin/productionOrder/create', [ProductionOrderController::class, 
 Route::post('/admin/productionOrder/checkConflict', [ProductionOrderController::class, 'checkConflict']);
 
 Route::put('/user/fo/modify', [ProductionOrderController::class, 'addRealStartTime']);
+
+Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQuantityProduct']);
 
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);
