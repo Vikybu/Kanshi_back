@@ -42,7 +42,7 @@ Route::get('/user/downtime-reason/', [DowntimeReasonController::class, 'getTypeD
 
 Route::get('/user/downtime-reason/{type}', [DowntimeReasonController::class, 'getDowntimeReason']);
 
-Route::post('/user/downtime-reason/add', [DowntimeReasonMachineController::class, 'addDowntimeReasonMachine']);
+Route::post('/user/downtime-reason/create', [DowntimeReasonMachineController::class, 'addDowntimeReasonMachine']);
 
 Route::post('/user/downtime-reason/add', [DowntimeReasonProductionOrderController::class, 'addDowntimeReasonProductionOrder']);
 

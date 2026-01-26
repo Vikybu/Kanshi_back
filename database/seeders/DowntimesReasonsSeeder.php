@@ -15,35 +15,35 @@ class DowntimesReasonsSeeder extends Seeder
         $downtimesReasons= [
             [
             'name' => 'pause',
-            'type' => 'arrêt planifié',
+            'type' => 'planned',
             ],
             [
             'name' => 'Intervention maintenance',
-            'type' => 'arrêt planifié',
+            'type' => 'planned',
             ],
             [
             'name' => 'Manque de matière première',
-            'type' => 'arrêt non planifié',
+            'type' => 'unplanned',
             ],
             [
             'name' => 'Problème dépilleur',
-            'type' => 'arrêt non planifié',
+            'type' => 'unplanned',
             ],
             [
             'name' => 'Problème operculeuse',
-            'type' => 'arrêt non planifié',
+            'type' => 'unplanned',
             ],
             [
             'name' => 'Manque de personnel',
-            'type' => 'arrêt non planifié',
+            'type' => 'unplanned',
             ],
             [
             'name' => 'Problème convoyeur',
-            'type' => 'arrêt non planifié',
+            'type' => 'unplanned',
             ],
             [
             'name' => 'Problème balance',
-            'type' => 'arrêt non planifié',
+            'type' => 'unplanned',
             ],
         ];
 

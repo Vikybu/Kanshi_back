@@ -7,7 +7,7 @@ use App\Models\DowntimeReasonMachine;
 
 class DowntimeReasonMachineRepository
 {
-    public function createNewDonwntimeReasonMachine($data): Collection
+    public function createNewDowntimeReasonMachine($data): DowntimeReasonMachine
     {
         return DowntimeReasonMachine::create($data);
     }
