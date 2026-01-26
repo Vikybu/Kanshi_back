@@ -49,4 +49,13 @@ class ProductionOrder extends Model
         return $this->belongsToMany(User::class, 'production_order_user', 'production_order_id', 'user_id')
                     ->withPivot('active_production');
     }
+
+        public function downtimesReasons(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            DowntimeReason::class, 
+            'production_order_donwtime_reason', 
+            'production_order_id', 
+            'downtime_reason_id');
+    }
 }
