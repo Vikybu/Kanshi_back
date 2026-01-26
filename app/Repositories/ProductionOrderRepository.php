@@ -83,7 +83,7 @@ class ProductionOrderRepository
             'duration_time'
         )
         ->with('rawMaterials:id,name,measurement_unit')
-        ->with('machines:id,machine_name')
+        ->with('machines:id,machine_name,theoritical_industrial_pace')
         ->where('id', $id)
         ->first();
 
@@ -97,7 +97,7 @@ class ProductionOrderRepository
             return ['error' => 'Ordre de production introuvable'];
         }
 
-        $order->actual_final_product_quantity = $actual_final_product_quantity;
+        $order->actual_final_product_quantity += $actual_final_product_quantity;
         $order->save();
 
         return[
