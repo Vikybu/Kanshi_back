@@ -36,6 +36,16 @@ class ProductionOrderController extends Controller
         return response()->json($productionOrder, 200);
     }
 
+    public function stopProductionOrder(Request $request)
+    {
+        $id = $request->input('id');
+        $real_end_time = $request->input('real_end_time');
+        $status = $request->input('status');
+        $message = $this->productionOrderService->endOfTheProductionOrder($id, $real_end_time, $status);
+
+        return response()->json($message, 200);
+    }
+
         public function addRealStartTime(Request $request)
     {
         $realStartTime = $request->input('real_start_time');

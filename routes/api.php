@@ -34,3 +34,5 @@ Route::put('/user/fo/modify', [ProductionOrderController::class, 'addRealStartTi
 Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQuantityProduct']);
 
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);
+
+Route::put('/user/fo/stop', [ProductionOrderController::class, 'stopProductionOrder']);
