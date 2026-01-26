@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         RawMaterialSeeder::class,
         FinalProductsSeeder::class,
         MachinesSeeder::class,
+        DowntimesReasonsSeeder::class,
     ]);
     }
 }

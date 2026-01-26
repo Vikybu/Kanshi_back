@@ -8,6 +8,9 @@ use App\Http\Controllers\FinalProductController;
 use App\Http\Controllers\CalculationController;
 use App\Http\Controllers\ProductionOrderController;
 use App\Http\Controllers\UserProductionOrderController;
+use App\Http\Controllers\DowntimeReasonController;
+use App\Http\Controllers\DowntimeReasonMachineController;
+use App\Http\Controllers\DowntimeReasonProductionOrderController;
 
 Route::post('/login', [LoginController::class, 'authenticate']);
 
@@ -34,3 +37,13 @@ Route::put('/user/fo/modify', [ProductionOrderController::class, 'addRealStartTi
 Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQuantityProduct']);
 
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);
+
+Route::get('/user/downtime-reason/', [DowntimeReasonController::class, 'getTypeDowntimeReason']);
+
+Route::get('/user/downtime-reason/{type}', [DowntimeReasonController::class, 'getDowntimeReason']);
+
+Route::post('/user/downtime-reason/create', [DowntimeReasonMachineController::class, 'addDowntimeReasonMachine']);
+
+Route::post('/user/downtime-reason/add', [DowntimeReasonProductionOrderController::class, 'addDowntimeReasonProductionOrder']);
+
+
