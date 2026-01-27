@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\ProductionOrder;
 use App\Repositories\ProductionOrderRepository;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ProductionOrderService
@@ -15,10 +14,16 @@ class ProductionOrderService
     {
         $this->productionOrderRepository = $productionOrderRepository;
     }
-    
+
+    /* ===== Récupération OF ===== */
     public function getAllProductionOrders()
     {
         return $this->productionOrderRepository->getInfosProductionOrders();
+    }
+
+    public function getAllPlannifiedProductionOrders()
+    {
+        return $this->productionOrderRepository->getInfosPlannifiedProductionOrders();
     }
 
     public function getOneProductionOrder($id)
@@ -26,6 +31,7 @@ class ProductionOrderService
         return $this->productionOrderRepository->getInfosOneProductionOrders($id);
     }
 
+    /* ===== Quantité / fin de production ===== */
     public function addQuantityProduction($id, $actual_final_product_quantity)
     {
         return $this->productionOrderRepository->updateQuantityProduction($id, $actual_final_product_quantity);
@@ -33,32 +39,32 @@ class ProductionOrderService
 
     public function endOfTheProductionOrder($id, $real_end_time, $status)
     {
-       return $this->productionOrderRepository->updateEndTimeProductionOrder($id, $real_end_time, $status); 
+        return $this->productionOrderRepository->updateEndTimeProductionOrder($id, $real_end_time, $status);
     }
-
 
     public function addInfoRealStartTime(string $realStartTime, int $id, string $status)
     {
         return $this->productionOrderRepository->modifyFORealStartTime($realStartTime, $id, $status);
     }
 
-    public function addProductionOrder(array $data){
-
+    public function addProductionOrder(array $data)
+    {
         return $this->productionOrderRepository->addProductionOrder($data);
     }
 
-    /**
-     * Calcul de la simulation d'un ordre de fabrication
-     *
-     * @param int $theoritical_raw_material_quantity Quantité de matière première
-     * @param int $final_product_quantity_per_product Quantité de matière par produit final
-     * @param int $machine_theoritical_industrial_pace Cadence théorique de la machine
-     * @param string $measurement_unit Unité de la cadence ('barquettes/min' ou 'barquettes/h')
-     * @param int $machine_id ID de la machine
-     * @param string $start_time Heure de début (Y-m-d H:i)
-     *
-     * @return array
-     */
+    /* ===== Démarrer un OF pour un utilisateur ===== */
+    public function startProductionForUser(int $productionId, int $userId, string $realStartTime, string $status)
+    {
+        return $this->productionOrderRepository->startProductionForUser($productionId, $userId, $realStartTime, $status);
+    }
+
+    /* ===== Terminer un OF pour un utilisateur ===== */
+    public function endProductionForUser(int $productionId, int $userId, string $realEndTime, string $status)
+    {
+        return $this->productionOrderRepository->endProductionForUser($productionId, $userId, $realEndTime, $status);
+    }
+
+    /* ===== Calcul de simulation d'un OF ===== */
     public function calculation(
         int $theoritical_raw_material_quantity,
         int $final_product_quantity_per_product,
