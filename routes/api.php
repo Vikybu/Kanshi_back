@@ -24,6 +24,8 @@ Route::get('/admin/final_product', [FinalProductController::class, 'getAllFinalP
 
 Route::get('/admin/productionOrder/get', [ProductionOrderController::class, 'getInfosAllProductionOrder']);
 
+Route::get('/admin/productionOrder/get/plannified', [ProductionOrderController::class, 'getInfosAllPlannifiedProductionOrder']);
+
 Route::get('/user/production/get/{id}', [ProductionOrderController::class, 'getInfosOneProductionOrder']);
 
 Route::post('/admin/productionOrder/simuler', [CalculationController::class, 'calculation']);
@@ -39,11 +41,12 @@ Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQu
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);
 
 Route::put('/user/fo/stop', [ProductionOrderController::class, 'stopProductionOrder']);
+
 Route::get('/user/downtime-reason/', [DowntimeReasonController::class, 'getTypeDowntimeReason']);
 
 Route::get('/user/downtime-reason/{type}', [DowntimeReasonController::class, 'getDowntimeReason']);
 
-Route::post('/user/downtime-reason/create', [DowntimeReasonMachineController::class, 'addDowntimeReasonMachine']);
+Route::post('/user/downtime-reason-machine/create', [DowntimeReasonMachineController::class, 'addDowntimeReasonMachine']);
 
 Route::post('/user/downtime-reason/add', [DowntimeReasonProductionOrderController::class, 'addDowntimeReasonProductionOrder']);
 
