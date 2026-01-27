@@ -106,4 +106,22 @@ class ProductionOrderRepository
         'order' => $order
         ];
     }
+
+    public function updateEndTimeProductionOrder($id, $real_end_time, $status)
+    {
+        $order = ProductionOrder::find($id);
+        if (!$order){
+            return ['error' => 'Ordre de production introuvable'];
+        }
+
+        $order->real_end_time = $real_end_time;
+        $order->status = $status;
+        $order->save();
+
+        return[
+        'success' => true,
+        'message' => 'Fin de l ordre de fabrication',
+        'order' => $order
+        ];
+    }
 }

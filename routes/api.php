@@ -38,6 +38,7 @@ Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQu
 
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);
 
+Route::put('/user/fo/stop', [ProductionOrderController::class, 'stopProductionOrder']);
 Route::get('/user/downtime-reason/', [DowntimeReasonController::class, 'getTypeDowntimeReason']);
 
 Route::get('/user/downtime-reason/{type}', [DowntimeReasonController::class, 'getDowntimeReason']);

@@ -31,6 +31,11 @@ class ProductionOrderService
         return $this->productionOrderRepository->updateQuantityProduction($id, $actual_final_product_quantity);
     }
 
+    public function endOfTheProductionOrder($id, $real_end_time, $status)
+    {
+       return $this->productionOrderRepository->updateEndTimeProductionOrder($id, $real_end_time, $status); 
+    }
+
 
     public function addInfoRealStartTime(string $realStartTime, int $id, string $status)
     {
