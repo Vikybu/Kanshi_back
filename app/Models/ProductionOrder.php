@@ -21,7 +21,8 @@ class ProductionOrder extends Model
         'final_products_id',
         'real_start_time',
         'real_end_time',
-        'duration_time'
+        'duration_time',
+        'quantity_in_production',
     ];
 
     public function machines(): BelongsToMany

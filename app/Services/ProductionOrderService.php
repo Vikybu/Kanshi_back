@@ -5,66 +5,145 @@ namespace App\Services;
 use App\Models\ProductionOrder;
 use App\Repositories\ProductionOrderRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log; 
 
 class ProductionOrderService
 {
-    protected $productionOrderRepository;
+    protected ProductionOrderRepository $productionOrderRepository;
 
     public function __construct(ProductionOrderRepository $productionOrderRepository)
     {
         $this->productionOrderRepository = $productionOrderRepository;
     }
 
-    /* ===== Récupération OF ===== */
+    //RÉCUPÉRATION DES OF
+    
     public function getAllProductionOrders()
     {
-        return $this->productionOrderRepository->getInfosProductionOrders();
+        return $this->productionOrderRepository->getAll();
     }
 
     public function getAllPlannifiedProductionOrders()
     {
-        return $this->productionOrderRepository->getInfosPlannifiedProductionOrders();
+        return $this->productionOrderRepository->getPlannified();
     }
 
-    public function getOneProductionOrder($id)
+    public function getOneProductionOrder(int $id)
     {
-        return $this->productionOrderRepository->getInfosOneProductionOrders($id);
+        return $this->productionOrderRepository->getById($id);
     }
 
-    /* ===== Quantité / fin de production ===== */
-    public function addQuantityProduction($id, $actual_final_product_quantity)
+    //CRÉATION D'UN OF 
+    
+    public function addProductionOrder(array $data): ProductionOrder
     {
-        return $this->productionOrderRepository->updateQuantityProduction($id, $actual_final_product_quantity);
+
+        $machineId = $data['machine_id'] ?? null;
+        $rawMaterialId = $data['raw_material_id'] ?? null;
+
+        unset($data['machine_id'], $data['raw_material_id']);
+
+        $data['real_start_time'] = $data['real_start_time'] ?? null;
+        $data['real_end_time'] = $data['real_end_time'] ?? null;
+        $data['duration_time'] = $data['duration_time'] ?? null;
+
+        $productionOrder = $this->productionOrderRepository->create($data);
+
+        if ($machineId) {
+            $this->productionOrderRepository->attachMachine($productionOrder, $machineId);
+        }
+
+        if ($rawMaterialId) {
+            $this->productionOrderRepository->attachRawMaterial($productionOrder, $rawMaterialId);
+        }
+
+        return $productionOrder;
     }
 
-    public function endOfTheProductionOrder($id, $real_end_time, $status)
+    //DÉMARRER UN OF POUR UN UTILISATEUR
+    
+    public function startProductionForUser(int $productionId, int $userId, string $realStartTime, string $status): array
     {
-        return $this->productionOrderRepository->updateEndTimeProductionOrder($id, $real_end_time, $status);
+        if ($this->productionOrderRepository->userHasActiveProduction($userId)) {
+            throw new \Exception("Vous avez déjà un OF actif. Terminez-le avant d'en ouvrir un nouveau.");
+        }
+
+        $productionOrder = $this->productionOrderRepository->findOrFail($productionId);
+
+        $updatedData = [
+            'real_start_time' => Carbon::parse($realStartTime)
+                ->setTimezone('Europe/Paris')
+                ->format('Y-m-d H:i:s'),
+            'status' => $status,
+        ];
+
+        $productionOrder = $this->productionOrderRepository->update($productionOrder, $updatedData);
+
+        $this->productionOrderRepository->attachUser($productionId, $userId);
+
+        return [
+            'success' => true,
+            'message' => 'Ordre de production démarré',
+            'order' => $productionOrder
+        ];
     }
 
-    public function addInfoRealStartTime(string $realStartTime, int $id, string $status)
+    //TERMINER UN OF POUR UN UTILISATEUR
+    
+    public function endProductionForUser(int $productionId, int $userId, string $realEndTime, string $status): array
     {
-        return $this->productionOrderRepository->modifyFORealStartTime($realStartTime, $id, $status);
+        $this->productionOrderRepository->detachUser($productionId, $userId);
+
+        $productionOrder = $this->productionOrderRepository->findOrFail($productionId);
+
+        $updatedData = [
+            'real_end_time' => Carbon::parse($realEndTime)
+                ->setTimezone('Europe/Paris')
+                ->format('Y-m-d H:i:s'),
+            'status' => $status,
+        ];
+
+        $productionOrder = $this->productionOrderRepository->update($productionOrder, $updatedData);
+
+        return [
+            'success' => true,
+            'message' => 'Ordre de production terminé',
+            'order' => $productionOrder
+        ];
     }
 
-    public function addProductionOrder(array $data)
+    //METTRE À JOUR QUANTITY_IN_PRODUCTION (AJOUT INCRÉMENTAL)
+    
+public function updateQuantityInProduction(int $productionOrderId, int $quantityToAdd): ProductionOrder
+{
+
+    $productionOrder = $this->productionOrderRepository->findOrFail($productionOrderId);
+    $updatedData = [
+        'quantity_in_production' => ($productionOrder->quantity_in_production ?? 0) + $quantityToAdd,
+    ];
+
+    $result = $this->productionOrderRepository->update($productionOrder, $updatedData);
+    return $result;
+}
+
+    //ARRÊTER LA PRODUCTION
+    
+    public function stopProduction(int $productionOrderId, int $finalQuantity): ProductionOrder
     {
-        return $this->productionOrderRepository->addProductionOrder($data);
+        $productionOrder = $this->productionOrderRepository->findOrFail($productionOrderId);
+
+        $updatedData = [
+            'actual_final_product_quantity' => $finalQuantity,
+            'quantity_in_production' => 0,
+            'status' => 'finished',
+            'real_end_time' => Carbon::now()->setTimezone('Europe/Paris')->format('Y-m-d H:i:s'),
+        ];
+
+        return $this->productionOrderRepository->update($productionOrder, $updatedData);
     }
 
-    /* ===== Démarrer un OF pour un utilisateur ===== */
-    public function startProductionForUser(int $productionId, int $userId, string $realStartTime, string $status)
-    {
-        return $this->productionOrderRepository->startProductionForUser($productionId, $userId, $realStartTime, $status);
-    }
-
-    /* ===== Terminer un OF pour un utilisateur ===== */
-    public function endProductionForUser(int $productionId, int $userId, string $realEndTime, string $status)
-    {
-        return $this->productionOrderRepository->endProductionForUser($productionId, $userId, $realEndTime, $status);
-    }
-
-    /* Calcul de simulation d'un OF */
+    //CALCUL DE SIMULATION D'UN OF
+    
     public function calculation(
         int $theoritical_raw_material_quantity,
         int $final_product_quantity_per_product,
@@ -75,13 +154,11 @@ class ProductionOrderService
     ): array {
         $start = Carbon::parse($start_time);
 
-        // Calcul de la quantité finale produite
         $theoritical_final_product_quantity = intdiv(
             ($theoritical_raw_material_quantity * 1000),
             $final_product_quantity_per_product
         );
 
-        // Calcul de la durée de production en minutes selon l'unité
         if (str_ends_with($measurement_unit, '/min')) {
             $duration_minutes = $theoritical_final_product_quantity / $machine_theoritical_industrial_pace;
         } elseif (str_ends_with($measurement_unit, '/h')) {

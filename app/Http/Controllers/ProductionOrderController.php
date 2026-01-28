@@ -4,108 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Services\ProductionOrderService;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class ProductionOrderController extends Controller 
 {
-    protected $productionOrderService;
+    protected ProductionOrderService $productionOrderService;
 
     public function __construct(ProductionOrderService $productionOrderService)
     {
         $this->productionOrderService = $productionOrderService;
     }
 
-    /* ===== Récupérer tous les OF ===== */
-    public function getInfosAllProductionOrder()
+    //RÉCUPÉRATION DES OF
+    
+    public function getInfosAllProductionOrder(): JsonResponse
     {
         $productionOrders = $this->productionOrderService->getAllProductionOrders();
         return response()->json($productionOrders, 200);
     }
 
-    /* ===== Récupérer tous les OF planifiés ===== */
-    public function getInfosAllPlannifiedProductionOrder()
+    public function getInfosAllPlannifiedProductionOrder(): JsonResponse
     {
         $productionOrders = $this->productionOrderService->getAllPlannifiedProductionOrders();
         return response()->json($productionOrders, 200);
     }
 
-    /* ===== Démarrer un OF pour un utilisateur ===== */
-    public function addRealStartTime(Request $request)
-    {
-        $validated = $request->validate([
-            'id' => 'required|integer|exists:production_orders,id',
-            'real_start_time' => 'required|date',
-            'status' => 'required|string',
-            'user_id' => 'required|integer|exists:users,id',
-        ]);
-
-        try {
-            $result = $this->productionOrderService->startProductionForUser(
-                $validated['id'],
-                $validated['user_id'],
-                $validated['real_start_time'],
-                $validated['status']
-            );
-
-            return response()->json($result, 201);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 409);
-        }
-    }
-
-    /* ===== Terminer un OF pour un utilisateur ===== */
-    public function stopProductionOrder(Request $request)
-    {
-        $validated = $request->validate([
-            'id' => 'required|integer|exists:production_orders,id',
-            'real_end_time' => 'required|date',
-            'status' => 'required|string',
-            'user_id' => 'required|integer|exists:users,id',
-        ]);
-
-        try {
-            $result = $this->productionOrderService->endProductionForUser(
-                $validated['id'],
-                $validated['user_id'],
-                $validated['real_end_time'],
-                $validated['status']
-            );
-
-            return response()->json($result, 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /* ===== Récupérer un OF précis ===== */
-    public function getInfosOneProductionOrder(int $id)
+    public function getInfosOneProductionOrder(int $id): JsonResponse
     {
         $productionOrder = $this->productionOrderService->getOneProductionOrder($id);
         return response()->json($productionOrder, 200);
     }
 
-    /* ===== Ajouter quantité produite ===== */
-    public function addQuantityProduct(Request $request)
-    {
-        $id = $request->input('id');
-        $actual_final_product_quantity = $request->input('actual_final_product_quantity');
-
-        $result = $this->productionOrderService->addQuantityProduction(
-            $id,
-            $actual_final_product_quantity
-        );
-
-        return response()->json($result, 200);
-    }
-
-    /* ===== Ajouter un nouvel OF ===== */
-    public function addANewProductionOrder(Request $request)
+    //CRÉATION D'UN OF
+    
+    public function addANewProductionOrder(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'production_order_reference' => 'required|string',
@@ -125,12 +58,114 @@ class ProductionOrderController extends Controller
         ]);
 
         $result = $this->productionOrderService->addProductionOrder($validated);
-
         return response()->json($result, 201);
     }
 
-    /* ===== Vérification conflit d’OF pour une machine ===== */
-    public function checkConflict(Request $request)
+    //DÉMARRER UN OF POUR UN UTILISATEUR
+    
+    public function addRealStartTime(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'required|integer|exists:production_orders,id',
+            'real_start_time' => 'required|date',
+            'status' => 'required|string',
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        try {
+            $result = $this->productionOrderService->startProductionForUser(
+                $validated['id'],
+                $validated['user_id'],
+                $validated['real_start_time'],
+                $validated['status']
+            );
+
+            return response()->json($result, 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
+        }
+    }
+
+    //TERMINER UN OF POUR UN UTILISATEUR
+    public function stopProductionOrder(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'required|integer|exists:production_orders,id',
+            'real_end_time' => 'required|date',
+            'status' => 'required|string',
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        try {
+            $result = $this->productionOrderService->endProductionForUser(
+                $validated['id'],
+                $validated['user_id'],
+                $validated['real_end_time'],
+                $validated['status']
+            );
+
+            return response()->json($result, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    //METTRE À JOUR QUANTITY_IN_PRODUCTION
+    
+    public function updateQuantity(Request $request, int $id): JsonResponse
+{
+
+    $validated = $request->validate([
+        'quantity_to_add' => 'required|integer|min:1',
+    ]);
+
+    try {
+        $productionOrder = $this->productionOrderService->updateQuantityInProduction(
+            $id, 
+            $validated['quantity_to_add']
+        );
+
+        return response()->json([
+            'message' => 'Quantité mise à jour avec succès',
+            'production_order' => $productionOrder,
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Erreur lors de la mise à jour de la quantité',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+    //ARRÊTER LA PRODUCTION
+    
+    public function stopProduction(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'final_quantity' => 'required|integer|min:0',
+        ]);
+
+        try {
+            $productionOrder = $this->productionOrderService->stopProduction(
+                $id, 
+                $validated['final_quantity']
+            );
+
+            return response()->json([
+                'message' => 'Production arrêtée avec succès',
+                'production_order' => $productionOrder,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de l\'arrêt de la production',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    //VÉRIFICATION DE CONFLITS
+    
+    public function checkConflict(Request $request): JsonResponse
     {
         $request->validate([
             'machine_id' => 'required|integer',

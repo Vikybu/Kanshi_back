@@ -11,6 +11,7 @@ use App\Http\Controllers\UserProductionOrderController;
 use App\Http\Controllers\DowntimeReasonController;
 use App\Http\Controllers\DowntimeReasonMachineController;
 use App\Http\Controllers\DowntimeReasonProductionOrderController;
+use App\Http\Controllers\AdminController;
 
 Route::post('/login', [LoginController::class, 'authenticate']);
 
@@ -36,7 +37,7 @@ Route::post('/admin/productionOrder/checkConflict', [ProductionOrderController::
 
 Route::put('/user/fo/modify', [ProductionOrderController::class, 'addRealStartTime']);
 
-Route::put('/user/fo/modify-quantity', [ProductionOrderController::class, 'addQuantityProduct']);
+Route::post('/user/fo/{id}/update-quantity', [ProductionOrderController::class, 'updateQuantity']);
 
 Route::post('/user/production-order/active', [UserProductionOrderController::class, 'getActiveProductionOrder']);
 
@@ -53,3 +54,7 @@ Route::post('/user/downtime-reason/add', [DowntimeReasonProductionOrderControlle
 Route::put('user/downtimes/{id}/end', [DowntimeReasonMachineController::class, 'updateEndDowntimeReasonMachine']);
 
 Route::get('/user/downtime-reason-machine/current/{machineId}',[DowntimeReasonMachineController::class, 'getCurrentDowntimeByMachine']);
+
+Route::get('/admin/display-production',[AdminController::class, 'getAllMachines']);
+
+Route::post('/fo/{id}/stop', [ProductionOrderController::class, 'stopProduction']);
