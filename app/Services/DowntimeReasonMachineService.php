@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Repositories\DowntimeReasonMachineRepository;
+use App\Models\Machine;
+use App\Models\ProductionOrder;
 use Carbon\Carbon;
 use Exception;
 
@@ -14,7 +16,7 @@ class DowntimeReasonMachineService
     {
         $this->downtimeReasonMachineRepository = $downtimeReasonMachineRepository;
     }
-    
+
     /** Démarrer un nouvel arrêt */
     public function addNewDowntimeReasonMachine(array $data)
     {
@@ -33,7 +35,28 @@ class DowntimeReasonMachineService
             $data['duration_downtime'] = $start->diffInMinutes($end);
         }
 
-        return $this->downtimeReasonMachineRepository->createNewDowntimeReasonMachine($data);
+        // Création de l'arrêt
+        $downtime = $this->downtimeReasonMachineRepository->createNewDowntimeReasonMachine($data);
+
+        // Si pas de fin, mettre la machine (et l'OF) en statut "stopped"
+        if (!isset($data['end_time_downtime']) || !$data['end_time_downtime']) {
+            $machine = Machine::find($data['machine_id']);
+            if ($machine) {
+                $machine->status = 'stopped';
+                $machine->save();
+            }
+
+            // Optionnel : si tu veux mettre aussi l'OF en arrêt
+            if (isset($data['of_id'])) { 
+                $of = ProductionOrder::find($data['of_id']);
+                if ($of) {
+                    $of->status = 'stopped';
+                    $of->save();
+                }
+            }
+        }
+
+        return $downtime;
     }
 
     /** Terminer un arrêt existant */
@@ -59,7 +82,24 @@ class DowntimeReasonMachineService
         $downtime->end_time_downtime = $endTime;
         $downtime->duration_downtime = $start->diffInMinutes($end);
 
-        return $this->downtimeReasonMachineRepository->saveDowntimeReasonMachine($downtime);
+        $downtime = $this->downtimeReasonMachineRepository->saveDowntimeReasonMachine($downtime);
+
+        // Machine et OF redeviendront "inProduction" après fin arrêt
+        $machine = Machine::find($downtime->machine_id);
+        if ($machine) {
+            $machine->status = 'inProduction';
+            $machine->save();
+        }
+
+        if ($downtime->of_id ?? false) {
+            $of = productionOrder::find($downtime->of_id);
+            if ($of) {
+                $of->status = 'inProduction';
+                $of->save();
+            }
+        }
+
+        return $downtime;
     }
 
     public function getCurrentDowntimeByMachine(int $machineId)
