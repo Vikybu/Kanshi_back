@@ -50,4 +50,6 @@ Route::post('/user/downtime-reason-machine/create', [DowntimeReasonMachineContro
 
 Route::post('/user/downtime-reason/add', [DowntimeReasonProductionOrderController::class, 'addDowntimeReasonProductionOrder']);
 
+Route::put('user/downtimes/{id}/end', [DowntimeReasonMachineController::class, 'updateEndDowntimeReasonMachine']);
 
+Route::get('/user/downtime-reason-machine/current/{machineId}',[DowntimeReasonMachineController::class, 'getCurrentDowntimeByMachine']);

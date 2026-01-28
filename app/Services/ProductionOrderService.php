@@ -64,7 +64,7 @@ class ProductionOrderService
         return $this->productionOrderRepository->endProductionForUser($productionId, $userId, $realEndTime, $status);
     }
 
-    /* ===== Calcul de simulation d'un OF ===== */
+    /* Calcul de simulation d'un OF */
     public function calculation(
         int $theoritical_raw_material_quantity,
         int $final_product_quantity_per_product,
