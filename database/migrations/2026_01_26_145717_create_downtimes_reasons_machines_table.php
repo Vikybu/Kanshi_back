@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('downtimes_reasons_machines', function (Blueprint $table) {
             $table->id();
             $table->dateTime('start_time_downtime');
-            $table->dateTime('end_time_downtime');
-            $table->integer('duration_downtime');
+            $table->dateTime('end_time_downtime')->nullable();
+            $table->integer('duration_downtime')->nullable();
             $table->foreignId('downtime_reason_id')->constrained('downtimes_reasons')->onDelete('cascade');
             $table->foreignId('machine_id')->constrained('machines')->onDelete('cascade');
             $table->timestamps();

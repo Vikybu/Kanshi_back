@@ -18,4 +18,9 @@ class DowntimeReasonMachine extends Model
         'end_time_downtime',
         'duration_downtime',
     ];
+
+    public function downtimeReason()
+    {
+        return $this->belongsTo(DowntimeReason::class);
+    }
 }
